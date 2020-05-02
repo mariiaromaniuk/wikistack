@@ -5,6 +5,11 @@ const { db } = require('./models'); // spread operator !!!
 const models = require('./models');
 const app = express(); // run express
 
+const wikiRouter = require('./routes/wiki');
+const userRouter = require('./routes/user');
+
+
+
 db.authenticate().
 then(() => {
     console.log('connected to the database');
@@ -26,12 +31,15 @@ init();
 app.use(morgan('dev'));
 app.use(express.urlencoded({extended: false})); // body parser
 app.use(express.static(__dirname + "/public")); // path where static files are
+app.use('/wiki', wikiRouter);
+app.use('/user', userRouter);
 
-app.get('/', (req, res) => {
-    res.send(layout(''));
-})
+
+app.get('/', (req, res, next) => {
+    res.redirect('/wiki');
+});
 
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`App listening in port ${PORT}`);
-  });
+});
